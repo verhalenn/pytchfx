@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import xml.etree.cElementTree as ET
 from database import Atbat, Pitch, Linescore, Base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime as dt, timedelta as td
@@ -67,31 +68,34 @@ def _get_inning_all(link, players):
         print("Sorry. Couldn't find {0}.".format(link + 'inning/inning_all.xml'))
         return []
     else:
-        soup = BeautifulSoup(r.text, 'xml')
+        tree = ET.fromstring(r.content)
         atbats = []
-        for atbat_data in soup.find_all('atbat'):
-            atbat = Atbat(**atbat_data.attrs)
-            try:
-                atbat.start_tfs_zulu = dt.strptime(atbat.start_tfs_zulu,
-                                                   '%Y-%m-%dT%H:%M:%SZ')
-            except ValueError:
-                atbat.start_tfs_zulu = None
-            atbat.batter = players[atbat.batter]
-            atbat.pitcher = players[atbat.pitcher]
-            if atbat_data.parent.name == 'top':
-                atbat.top = True
-            else:
-                atbat.top = False
-            pitch_data = atbat_data.find_all('pitch')
-            pitches = [Pitch(**pitch.attrs) for pitch in pitch_data]
-            for pitch in pitches:
-                try:
-                    pitch.tfs_zulu = dt.strptime(pitch.tfs_zulu,
-                                                 '%Y-%m-%dT%H:%M:%SZ')
-                except ValueError:
-                    pitch.tfs_zulu = None
-            atbat.pitches = pitches
-            atbats.append(atbat)
+        for inning in tree.findall('.//inning'):
+            for inning_side in inning.getchildren():
+                if inning_side.tag == 'top':
+                    top = True
+                else:
+                    top = False
+                for atbat_data in tree.findall('.//atbat'):
+                    atbat = Atbat(**atbat_data.attrib)
+                    try:
+                        atbat.start_tfs_zulu = dt.strptime(atbat.start_tfs_zulu,
+                                                           '%Y-%m-%dT%H:%M:%SZ')
+                    except ValueError:
+                        atbat.start_tfs_zulu = None
+                    atbat.batter = players[atbat.batter]
+                    atbat.pitcher = players[atbat.pitcher]
+                    atbat.top = top
+                    pitch_data = atbat_data.findall('pitch')
+                    pitches = [Pitch(**pitch.attrib) for pitch in pitch_data]
+                    for pitch in pitches:
+                        try:
+                            pitch.tfs_zulu = dt.strptime(pitch.tfs_zulu,
+                                                         '%Y-%m-%dT%H:%M:%SZ')
+                        except ValueError:
+                            pitch.tfs_zulu = None
+                    atbat.pitches = pitches
+                    atbats.append(atbat)
         return atbats
 
 

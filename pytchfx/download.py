@@ -30,7 +30,7 @@ def _get_linescore(link):
         print("Couldn't find {0}. Sorry!".format(link + 'linescore.xml'))
         return None
     else:
-        game = BeautifulSoup(r.text, 'xml').game.attrs
+        game = ET.fromstring(r.content).attrib
         linescore = Linescore(**game)
         try:
             linescore.time_date = dt.strptime(linescore.time_date,

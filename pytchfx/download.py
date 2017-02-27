@@ -36,12 +36,12 @@ def _get_linescore(link):
             linescore.time_date = dt.strptime(linescore.time_date,
                                               '%Y/%m/%d %H:%M')
             linescore.time_date += td(hours=12)
-        except ValueError:
+        except:
             linescore.time_date = None
         try:
             linescore.original_date = dt.strptime(linescore.original_date,
                                                   '%Y/%m/%d')
-        except ValueError:
+        except:
             linescore.original_date = None
         return linescore
 
@@ -81,7 +81,7 @@ def _get_inning_all(link, players):
                     try:
                         atbat.start_tfs_zulu = dt.strptime(atbat.start_tfs_zulu,
                                                            '%Y-%m-%dT%H:%M:%SZ')
-                    except ValueError:
+                    except:
                         atbat.start_tfs_zulu = None
                     atbat.batter = players[atbat.batter]
                     atbat.pitcher = players[atbat.pitcher]
@@ -92,7 +92,7 @@ def _get_inning_all(link, players):
                         try:
                             pitch.tfs_zulu = dt.strptime(pitch.tfs_zulu,
                                                          '%Y-%m-%dT%H:%M:%SZ')
-                        except ValueError:
+                        except:
                             pitch.tfs_zulu = None
                     atbat.pitches = pitches
                     atbats.append(atbat)

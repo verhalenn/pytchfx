@@ -97,7 +97,6 @@ def _get_inning_all(link, players):
                             pitch.tfs_zulu = None
                     atbat.pitches = pitches
                     atbats.append(atbat)
-        print(len(atbats))
         return atbats
 
 

@@ -4,6 +4,7 @@ import xml.etree.cElementTree as ET
 from database import Atbat, Pitch, Linescore, Base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime as dt, timedelta as td
+from multiprocessing import Pool
 
 
 def _get_gids(date):
@@ -76,7 +77,7 @@ def _get_inning_all(link, players):
                     top = True
                 else:
                     top = False
-                for atbat_data in tree.findall('.//atbat'):
+                for atbat_data in inning_side.findall('.//atbat'):
                     atbat = Atbat(**atbat_data.attrib)
                     try:
                         atbat.start_tfs_zulu = dt.strptime(atbat.start_tfs_zulu,
@@ -96,22 +97,30 @@ def _get_inning_all(link, players):
                             pitch.tfs_zulu = None
                     atbat.pitches = pitches
                     atbats.append(atbat)
+        print(len(atbats))
         return atbats
+
+
+def _get_data(link):
+    players = _get_players(link=link)
+    game = _get_linescore(link=link)
+    if players is not None and game is not None:
+        game.atbats = _get_inning_all(link=link, players=players)
+    return game
 
 
 def scrape(start, end, engine):
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
+    p = Pool(15)
     date = dt.strptime(start, '%Y/%m/%d')
     end_date = dt.strptime(end, '%Y/%m/%d')
     while date <= end_date:
-        games = _get_gids(date)
-        for link in games:
-            players = _get_players(link=link)
-            game = _get_linescore(link=link)
-            if players is not None and game is not None:
-                game.atbats = _get_inning_all(link=link, players=players)
+        links = _get_gids(date)
+        games = p.map(_get_data, links)
+        for game in games:
+            if game is not None:
                 session.add(game)
-            session.commit()
+        session.commit()
         date += td(1)

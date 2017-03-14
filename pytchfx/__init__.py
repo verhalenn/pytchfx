@@ -1,1 +1,1 @@
-from .download import scrape
+from .download import scrape, update

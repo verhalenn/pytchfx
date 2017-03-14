@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import xml.etree.cElementTree as ET
 from database import Atbat, Pitch, Linescore, Base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import func
 from datetime import datetime as dt, timedelta as td
 from multiprocessing import Pool
 
@@ -123,3 +124,14 @@ def scrape(start, end, engine):
                 session.add(game)
         session.commit()
         date += td(1)
+
+
+def update(engine):
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    start_time_date = session.query(func.max(Linescore.time_date)).scalar()
+    start_time_date += td(days=1)
+    end_time_date = dt.now() - td(days=1)
+    start = start_time_date.strftime('%Y/%m/%d')
+    end = end_time_date.strftime('%Y/%m/%d')
+    scrape(start=start, end=end, engine=engine)

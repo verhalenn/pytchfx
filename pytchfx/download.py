@@ -134,4 +134,7 @@ def update(engine):
     end_time_date = dt.now() - td(days=1)
     start = start_time_date.strftime('%Y/%m/%d')
     end = end_time_date.strftime('%Y/%m/%d')
-    scrape(start=start, end=end, engine=engine)
+    if start < end:
+        scrape(start=start, end=end, engine=engine)
+    else:
+        print('Already up to date.')

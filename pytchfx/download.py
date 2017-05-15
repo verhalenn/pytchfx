@@ -130,11 +130,12 @@ def update(engine):
     Session = sessionmaker(bind=engine)
     session = Session()
     start_time_date = session.query(func.max(Linescore.time_date)).scalar()
+    current_max = start_time_date.strftime('%Y/%m/%d')
     start_time_date += td(days=1)
     end_time_date = dt.now() - td(days=1)
     start = start_time_date.strftime('%Y/%m/%d')
     end = end_time_date.strftime('%Y/%m/%d')
-    if start < end:
+    if current_max < end:
         scrape(start=start, end=end, engine=engine)
     else:
         print('Already up to date.')

@@ -27,6 +27,7 @@ def _get_gids(date):
 
 def _get_linescore(link):
     r = requests.get(link + 'linescore.xml')
+    gid = link.split('/')[-1]
     print(r.url)
     if (r.status_code != 200):
         print("Couldn't find {0}. Sorry!".format(link + 'linescore.xml'))
@@ -34,6 +35,7 @@ def _get_linescore(link):
     else:
         game = ET.fromstring(r.content).attrib
         linescore = Linescore(**game)
+        linescore.gid = gid
         try:
             linescore.time_date = dt.strptime(linescore.time_date,
                                               '%Y/%m/%d %H:%M')
@@ -73,6 +75,7 @@ def _get_inning_all(link, players):
         tree = ET.fromstring(r.content)
         atbats = []
         for inning in tree.findall('.//inning'):
+            inning_num = inning.get('num')
             for inning_side in inning.getchildren():
                 if inning_side.tag == 'top':
                     top = True
@@ -80,6 +83,7 @@ def _get_inning_all(link, players):
                     top = False
                 for atbat_data in inning_side.findall('.//atbat'):
                     atbat = Atbat(**atbat_data.attrib)
+                    atbat.inning = inning_num
                     try:
                         atbat.start_tfs_zulu = dt.strptime(atbat.start_tfs_zulu,
                                                            '%Y-%m-%dT%H:%M:%SZ')

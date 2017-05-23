@@ -10,10 +10,11 @@ class Linescore(Base):
     __tablename__ = 'linescores'
 
     game_id = Column(Integer, primary_key=True)
+    gid = Column(String(35))
     away_name_abbrev = Column(String(3))
     away_team_runs = Column(Integer)
     away_team_hits = Column(Integer)
-    away_team_erros = Column(Integer)
+    away_team_errors = Column(Integer)
     home_name_abbrev = Column(String(3))
     home_team_runs = Column(Integer)
     home_team_hits = Column(Integer)
@@ -49,6 +50,7 @@ class Atbat(Base):
     s = Column(Integer)
     o = Column(Integer)
     event = Column(String(20))
+    inning = Column(Integer)
 
     def __init__(self, **entries):
         self.__dict__.update(entries)

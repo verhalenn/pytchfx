@@ -37,7 +37,7 @@ def _get_linescore(link):
     gid = link.split('/')[-1]
     print(r.url)
     # Check to see if you could find the link
-    if (r.status_code != 200):
+    if r.status_code != 200:
         print("Couldn't find {0}. Sorry!".format(link + 'linescore.xml'))
         return None
     else:
@@ -68,7 +68,7 @@ def _get_players(link):
     r = requests.get(link + 'players.xml')
     print(r.url)
     # Check to make sure the xml could be found
-    if (r.status_code != 200):
+    if r.status_code != 200:
         print("Couldn't find {0}. Sorry!".format(link + 'players.xml'))
         return None
     else:
@@ -88,7 +88,7 @@ def _get_inning_all(link, players):
     r = requests.get(link + 'inning/inning_all.xml')
     print(r.url)
     # Check to make sure url worked
-    if (r.status_code != 200):
+    if r.status_code != 200:
         print("Sorry. Couldn't find {0}."
               .format(link + 'inning/inning_all.xml'))
         return []

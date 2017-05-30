@@ -69,7 +69,8 @@ def _get_inning_all(link, players):
     r = requests.get(link + 'inning/inning_all.xml')
     print(r.url)
     if (r.status_code != 200):
-        print("Sorry. Couldn't find {0}.".format(link + 'inning/inning_all.xml'))
+        print("Sorry. Couldn't find {0}."
+              .format(link + 'inning/inning_all.xml'))
         return []
     else:
         tree = ET.fromstring(r.content)
@@ -113,19 +114,29 @@ def _get_data(link):
     return game
 
 
-def scrape(start, end, engine):
+# This is the main function that scrapes every game from the start to the end
+# date.
+def scrape(start, end, engine, pool_size=1):
+    # Setting up the sqlalchemy objects.
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
-    p = Pool(15)
+    # Setting up the pool for multiprocessing
+    p = Pool(pool_size)
+    # Converting the dates from a string to a datetime object
     date = dt.strptime(start, '%Y/%m/%d')
     end_date = dt.strptime(end, '%Y/%m/%d')
+    # Loops through each date
     while date <= end_date:
+        # Find the games on that particular date
         links = _get_gids(date)
+        # Get the data from each game on date
         games = p.map(_get_data, links)
+        # Iteratively add each game to the database
         for game in games:
             if game is not None:
                 session.add(game)
+        # Commit to the session and add one day to the date variable
         session.commit()
         date += td(1)
 

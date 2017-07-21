@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import xml.etree.cElementTree as ET
-from database import Atbat, Pitch, Linescore, Base
+from pytchfx.database import Atbat, Pitch, Linescore, Base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import func
 from datetime import datetime as dt, timedelta as td
@@ -35,6 +35,7 @@ def _get_gids(date):
 def _get_linescore(link):
     r = requests.get(link + 'linescore.xml')
     gid = link.split('/')[-1]
+    date = dt.strptime(link[39:64], 'year_%Y/month_%m/day_%d').date()
     print(r.url)
     # Check to see if you could find the link
     if r.status_code != 200:
@@ -45,6 +46,7 @@ def _get_linescore(link):
         game = ET.fromstring(r.content).attrib
         linescore = Linescore(**game)
         linescore.gid = gid
+        linescore.date = date
         # convert the time date and original date
         try:
             linescore.time_date = dt.strptime(linescore.time_date,
@@ -178,7 +180,7 @@ def scrape(start, end, engine, pool_size=1):
 def update(engine):
     Session = sessionmaker(bind=engine)
     session = Session()
-    start_time_date = session.query(func.max(Linescore.time_date)).scalar()
+    start_time_date = session.query(func.max(Linescore.date)).scalar()
     current_max = start_time_date.strftime('%Y/%m/%d')
     start_time_date += td(days=1)
     end_time_date = dt.now() - td(days=1)

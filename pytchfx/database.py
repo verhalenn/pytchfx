@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Float, Integer, String, DateTime, Boolean
+from sqlalchemy import Column, Float, Integer, String, DateTime, Date, Boolean
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 
@@ -10,6 +10,7 @@ class Linescore(Base):
     __tablename__ = 'linescores'
 
     game_id = Column(Integer, primary_key=True)
+    date = Column(Date)
     gid = Column(String(35))
     away_name_abbrev = Column(String(3))
     away_team_runs = Column(Integer)

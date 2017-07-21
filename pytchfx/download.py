@@ -34,7 +34,7 @@ def _get_gids(date):
 # Get the linescore data
 def _get_linescore(link):
     r = requests.get(link + 'linescore.xml')
-    gid = link.split('/')[-1]
+    gid = link.split('/')[-2]
     date = dt.strptime(link[39:64], 'year_%Y/month_%m/day_%d').date()
     print(r.url)
     # Check to see if you could find the link

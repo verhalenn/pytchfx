@@ -1,7 +1,7 @@
-from pytchfx.download import scrape
+from pytchfx import Pytchfx
 from sqlalchemy import create_engine
-import pandas as pd
 
 engine = create_engine('sqlite://')
-scrape('2016/06/06', '2016/06/06', engine)
-print(pd.read_sql_table('linescores', engine))
+pitchfx = Pytchfx(engine=engine)
+data = pitchfx.scrape('2016/06/06', '2016/06/06')
+test = pitchfx.get_batter('Kris Bryant')

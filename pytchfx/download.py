@@ -6,6 +6,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import func
 from datetime import datetime as dt, timedelta as td
 from multiprocessing import Pool
+from .analysis.player import Player
+import pandas as pd
 
 class Pytchfx:
 
@@ -19,7 +21,7 @@ class Pytchfx:
         links = []
         # Setup the link
         base_link = "http://gd2.mlb.com/components/game/mlb/"
-        day = base_link + date.strftime("year_%Y/month_%m/day_%d/")
+        day = base_link + date.strftime("year_%Y/month_%m/day_%d")
         # Get the link using requests
         r = requests.get(day)
         # Check if the link works
@@ -30,9 +32,9 @@ class Pytchfx:
             soup = BeautifulSoup(r.text, 'lxml')
             for link in soup.find_all('a'):
                 link_address = link.get('href')
-                if link_address.startswith('gid_'):
+                if link_address.startswith(date.strftime("day_%d/gid_")):
                     print(link_address)
-                    links.append(day + link_address)
+                    links.append(day + link_address[6:])
         # Return the links
         return links
 
@@ -160,8 +162,6 @@ class Pytchfx:
     def scrape(self, start, end, pool_size=1):
         # Setting up the sqlalchemy objects.
         Base.metadata.create_all(self.engine)
-        # Setting up the pool for multiprocessing
-        p = Pool(pool_size)
         # Converting the dates from a string to a datetime object
         date = dt.strptime(start, '%Y/%m/%d')
         end_date = dt.strptime(end, '%Y/%m/%d')
@@ -170,14 +170,14 @@ class Pytchfx:
             # Find the games on that particular date
             links = self._get_gids(date)
             # Get the data from each game on date
-            games = p.map(self._get_data, links)
-            # Iteratively add each game to the database
-            for game in games:
+            for link in links:
+                game = self._get_data(link=link)
+                # Iteratively add each game to the database
                 if game is not None:
                     self.session.add(game)
-            # Commit to the session and add one day to the date variable
-            self.session.commit()
-            date += td(1)
+                # Commit to the session and add one day to the date variable
+                self.session.commit()
+                date += td(1)
 
 
     # Update the database from last day downloaded to today.
@@ -192,3 +192,13 @@ class Pytchfx:
             self.scrape(start=start, end=end)
         else:
             print('Already up to date.')
+
+    def get_batter(self, batter_name):
+        atbat_data = pd.read_sql(self.session.query(Atbat).join(Pitch).filter(
+            Atbat.batter==batter_name).statement,
+                                  self.session.bind)
+        pitch_data = pd.read_sql(self.session.query(Pitch).join(Atbat).filter(
+            Atbat.batter==batter_name).statement,
+                                 self.session.bind)
+        batter_data = {'atbats': atbat_data, 'pitches': pitch_data}
+        return Player(batter_data)

@@ -55,6 +55,8 @@ class Pytchfx:
             linescore = Linescore(**game)
             linescore.gid = gid
             linescore.date = date
+            # convert top inning to boolean
+            linescore.top_inning = linescore.top_inning == 'Y'
             # convert the time date and original date
             try:
                 linescore.time_date = dt.strptime(linescore.time_date,

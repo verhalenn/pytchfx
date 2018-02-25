@@ -194,12 +194,32 @@ class Pytchfx:
         else:
             print('Already up to date.')
 
+    # Get a batter from the database.
     def get_batter(self, batter_name):
+        # Get the batters atbat data from the database
         atbat_data = pd.read_sql(self.session.query(Atbat).join(Pitch).filter(
             Atbat.batter==batter_name).statement,
                                   self.session.bind)
+        # Get the batters pitch data from the database
         pitch_data = pd.read_sql(self.session.query(Pitch).join(Atbat).filter(
             Atbat.batter==batter_name).statement,
                                  self.session.bind)
+        # Set the data up as a dictionary.
         batter_data = {'atbats': atbat_data, 'pitches': pitch_data}
+        # Create a BasePytchfxData object using the data_dictionary.
         return BasePytchfxData(batter_data)
+
+    def get_pitcher(self, pitcher_name):
+        # Get the pitcher atbat data from the database
+        atbat_data = pd.read_sql(self.session.query(Atbat).join(Pitch).filter(
+            Atbat.batter==pitcher_name).statement,
+                                 self.session.bind)
+        # Get the pitcher pitch data from the database
+        pitch_data = pd.read_sql(self.session.query(Pitch).join(Atbat).filter(
+            Atbat.batter==pitcher_name).statement,
+                                 self.session.bind)
+        # Set the data up as a dictionary.
+        batter_data = {'atbats': atbat_data, 'pitches': pitch_data}
+        # Create a BasePytchfxData object using the data_dictionary and return it.
+        return BasePytchfxData(batter_data)
+

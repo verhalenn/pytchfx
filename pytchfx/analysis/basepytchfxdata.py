@@ -1,8 +1,7 @@
-import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-class Player:
+class BasePytchfxData:
 
     def __init__(self, player_data):
         try:

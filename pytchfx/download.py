@@ -5,8 +5,7 @@ from pytchfx.database import Atbat, Pitch, Linescore, Base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import func
 from datetime import datetime as dt, timedelta as td
-from multiprocessing import Pool
-from .analysis.player import Player
+from .analysis.basepytchfxdata import BasePytchfxData
 import pandas as pd
 
 class Pytchfx:
@@ -203,4 +202,4 @@ class Pytchfx:
             Atbat.batter==batter_name).statement,
                                  self.session.bind)
         batter_data = {'atbats': atbat_data, 'pitches': pitch_data}
-        return Player(batter_data)
+        return BasePytchfxData(batter_data)

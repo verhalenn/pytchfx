@@ -23,6 +23,14 @@ class BasePytchfxData:
             sns.distplot(result_data.spin_rate, label=result)
         plt.legend()
         plt.show()
+
+    def pitch_type_stats(self):
+        pitch_type = self.pitches.groupby('pitch_type')['start_speed', 'spin_rate', 'z0', 'x0', 'break_length',
+            'break_angle'].mean()
+        pitch_type['Percent'] = self.pitches.pitch_type.value_counts(normalize=True) * 100
+        pitch_type['Count'] = self.pitches.pitch_type.value_counts(normalize=False)
+        return(pitch_type)
+
     def pitch_type_speed(self):
         for pitch_type in self.pitches.pitch_type.unique():
             result_data = self.pitches[self.pitches.pitch_type == pitch_type]
@@ -38,6 +46,6 @@ class BasePytchfxData:
         plt.show()
 
     def pitch_des_stats(self):
-        des = self.pitches.groupby('des')['start_speed', 'z0', 'x0', 'break_angle', 'break_length'].mean()
+        des = self.pitches.groupby('des')['start_speed', 'spin_rate', 'z0', 'x0', 'break_angle', 'break_length'].mean()
         des['count'] = self.pitches.des.value_counts()
         return des

@@ -142,7 +142,7 @@ pitch_type(varchar(2)): The most probable pitch type.
 
 px, pz (float): The coordinates in feet as it crosses home plate. Y not being needed because it's already set.
 
-spin_dir(float): Not entirely positive. But I would have to guess the angle of the spin.
+spin_dir(float): Not entirely positive, but I would have to guess the angle of the axis the ball is spinning on.
 
 spin_rate(float): The number of rotations a second the ball was thrown at.
 

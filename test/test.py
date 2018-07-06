@@ -1,4 +1,4 @@
-from pytchfx import Pytchfx
+from pytchfx.download import Pytchx
 from sqlalchemy import create_engine
 
 engine = create_engine('sqlite://')

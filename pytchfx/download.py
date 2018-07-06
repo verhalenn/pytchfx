@@ -5,7 +5,7 @@ from pytchfx.database import Atbat, Pitch, Linescore, Base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import func
 from datetime import datetime as dt, timedelta as td
-from .analysis.basepytchfxdata import BasePytchfxData
+from pytchfx.analysis.basepytchfxdata import BasePytchfxData
 import pandas as pd
 
 class Pytchfx:
@@ -212,14 +212,14 @@ class Pytchfx:
     def get_pitcher(self, pitcher_name):
         # Get the pitcher atbat data from the database
         atbat_data = pd.read_sql(self.session.query(Atbat).join(Pitch).filter(
-            Atbat.batter==pitcher_name).statement,
+            Atbat.pitcher==pitcher_name).statement,
                                  self.session.bind)
         # Get the pitcher pitch data from the database
         pitch_data = pd.read_sql(self.session.query(Pitch).join(Atbat).filter(
-            Atbat.batter==pitcher_name).statement,
+            Atbat.pitcher==pitcher_name).statement,
                                  self.session.bind)
         # Set the data up as a dictionary.
-        batter_data = {'atbats': atbat_data, 'pitches': pitch_data}
+        pitcher_data = {'atbats': atbat_data, 'pitches': pitch_data}
         # Create a BasePytchfxData object using the data_dictionary and return it.
-        return BasePytchfxData(batter_data)
+        return BasePytchfxData(pitcher_data)
 

@@ -168,6 +168,7 @@ class Pytchfx:
         end_date = dt.strptime(end, '%Y/%m/%d')
         # Loops through each date
         while date <= end_date:
+            print(date)
             # Find the games on that particular date
             links = self._get_gids(date)
             # Get the data from each game on date
@@ -178,11 +179,11 @@ class Pytchfx:
                     self.session.add(game)
                 # Commit to the session and add one day to the date variable
                 self.session.commit()
-                date += td(1)
+            date += td(1)
 
 
     # Update the database from last day downloaded to today.
-    def update(self, engine):
+    def update(self):
         start_time_date = self.session.query(func.max(Linescore.date)).scalar()
         current_max = start_time_date.strftime('%Y/%m/%d')
         start_time_date += td(days=1)

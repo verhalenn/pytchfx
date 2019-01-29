@@ -38,7 +38,7 @@ and 'N' meaning No.
 game_type(varchar(1)): One letter abbreviation for the game type.
 
 * R: Regular Season
-* E: I'm not sure what the E stands for but it seems to be all the college games.
+* E: I'm not sure what the E stands for, but it seems to be all the college games.
 * S: Spring Training
 * A: Allstar game
 * D: Division Championship Series
@@ -48,7 +48,7 @@ game_type(varchar(1)): One letter abbreviation for the game type.
 
 inning(int): What inning the game ended on.
 
-status(varchar(15): Whether or no the game finished.
+status(varchar(15): Whether or not the game finished.
 
 top_inning(tinyint): What side of the inning the game finished on.
 
@@ -78,7 +78,7 @@ stand(varchar(1)): Single letter representing the stance of the batter.
 away_team_runs(int): The number of runs through out the game the away team has scored by the end of the atbat.
 Null if no runs were scored in the atbat.
 
-home_team_runs(int): The number of runs through out the game the home team has scored by the end of the atabt.
+home_team_runs(int): The number of runs through out the game the home team has scored by the end of the atbat.
 null if no runs were scored in the atabt.
 
 b(int): The count of balls at the end of the atbat. 0 unless a walk in spring training games.
@@ -142,7 +142,7 @@ pitch_type(varchar(2)): The most probable pitch type.
 
 px, pz (float): The coordinates in feet as it crosses home plate. Y not being needed because it's already set.
 
-spin_dir(float): Not entirely positive. But I would have to guess the angle of the spin.
+spin_dir(float): Not entirely positive, but I would have to guess the angle of the axis the ball is spinning on.
 
 spin_rate(float): The number of rotations a second the ball was thrown at.
 

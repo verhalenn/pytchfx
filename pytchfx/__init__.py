@@ -1,1 +1,1 @@
-from .download import *
+from pytchfx.download import *

@@ -43,6 +43,7 @@ class Atbat(Base):
     top = Column(Boolean)
     start_tfs_zulu = Column(DateTime)
     pitcher = Column(String(30))
+    p_throws = Column(String(1))
     batter = Column(String(30))
     stand = Column(String(1))
     away_team_runs = Column(Integer)

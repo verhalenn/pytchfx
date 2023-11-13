@@ -1,3 +1,8 @@
+Out of Date
+===========
+
+mlb.com has changed their api structure, so the current version of this scraper will no longer work.
+
 Pytchfx 
 =======
 
